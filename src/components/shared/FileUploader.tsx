@@ -1,4 +1,4 @@
-import React, {Fragment, useCallback, useState} from 'react';
+import {Fragment, useCallback, useState} from 'react';
 import { FileWithPath, useDropzone } from 'react-dropzone';
 import { Button } from '../ui/button';
 

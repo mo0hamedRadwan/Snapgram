@@ -58,10 +58,10 @@ const AuthProvider = ({ children } : { children: React.ReactNode }) => {
     }
 
     useEffect(() => {
-        // if(
-        //     localStorage.getItem("cookiesFallback") === '[]' ||
-        //     localStorage.getItem("cookiesFallback") === null
-        // ) navigate('/sign-in');
+        if(
+            localStorage.getItem("cookiesFallback") === '[]' ||
+            localStorage.getItem("cookiesFallback") === null
+        ) navigate('/sign-in');
     }, []);
 
     const value: IContextType = {

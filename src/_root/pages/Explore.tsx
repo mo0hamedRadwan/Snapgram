@@ -20,7 +20,7 @@ const Explore = () => {
     if(inView && !searchValue)
       fetchNextPage();
 
-  }, [inView, searchValue])
+  }, [fetchNextPage, inView, searchValue])
 
   //console.log(posts)
 

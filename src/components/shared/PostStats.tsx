@@ -37,17 +37,17 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
   const handleLikePost = (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    let newLikes = [...likes];
+    const newLikes = [...likes];
     const isLiked = newLikes.includes(userId);
 
     if (isLiked) {
       newLikes.filter((id) => id !== userId);
-      console.log(newLikes);
+      //console.log(newLikes);
     } else {
       newLikes.push(userId);
     }
 
-    setLikes([...newLikes]);
+    setLikes(newLikes);
     likePost({ postId: post?.$id || '', likesArray: newLikes });
   };
 

@@ -102,8 +102,7 @@ export const useDeleteSavedPost = () => {
     const queryClinet = useQueryClient();
 
     return useMutation({
-        mutationFn: ({postId}: 
-            {postId: string, userId: string}) => deleteSavedPost(postId),
+        mutationFn: (postId: string) => deleteSavedPost(postId),
         onSuccess: () => {
             queryClinet.invalidateQueries({
                 queryKey: [QUERY_KEYS.GET_RECENT_POSTS],

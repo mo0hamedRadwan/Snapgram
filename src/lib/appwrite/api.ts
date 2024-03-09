@@ -230,7 +230,7 @@ export async function likePost(postId: string, likesArray: string[]){
 
 export async function savePost(postId: string, userId: string){
   try {
-    const updatedPost = await databases.createDocument(
+    const savedPost = await databases.createDocument(
       appwriteConfig.databaseId,
       appwriteConfig.savesCollectionId,
       ID.unique(),
@@ -240,9 +240,9 @@ export async function savePost(postId: string, userId: string){
       }
     )
 
-    if (!updatedPost) throw Error;
+    if (!savedPost) throw Error;
 
-    return updatedPost;
+    return savedPost;
   } catch (error) {
     console.log(error);
   }
@@ -251,6 +251,7 @@ export async function savePost(postId: string, userId: string){
 
 export async function deleteSavedPost(savedRecordId: string){
   try {
+    //console.log("delete", savedRecordId);
     const statusCode = await databases.deleteDocument(
       appwriteConfig.databaseId,
       appwriteConfig.savesCollectionId,
@@ -365,7 +366,7 @@ export async function getInfinitePosts({ pageParam = 0 } : { pageParam: number})
   const offset = (currentPage - 1) * limit;
   if(offset > numOfPosts) {
     hasNextPage = false;
-    throw new Error; 
+    throw Error; 
   }
 
   if(pageParam){

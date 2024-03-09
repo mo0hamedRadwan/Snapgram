@@ -18,8 +18,11 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
 
   const likesList = post?.likes.map((user: Models.Document) => user.$id);
   const savedPostRecord = currentUser?.save.find(
-    (record: Models.Document) => record.$id === post?.$id
+    (record: Models.Document) => record.post.$id === post?.$id
   );
+
+  //console.log(currentUser)
+  //console.log(savedPostRecord)
 
   const [likes, setLikes] = useState(likesList);
   const [isSaved, setIsSaved] = useState(false);
@@ -32,17 +35,16 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
     setIsSaved(!!savedPostRecord);
   }, [currentUser]);
 
-  const checkIsLiked = () => !likes.includes(userId);
+  const checkIsLiked = () => !likes.includes(currentUser?.$id);
 
   const handleLikePost = (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    const newLikes = [...likes];
+    let newLikes = [...likes];
     const isLiked = newLikes.includes(userId);
 
     if (isLiked) {
-      newLikes.filter((id) => id !== userId);
-      //console.log(newLikes);
+      newLikes = newLikes.filter((id) => id !== userId);
     } else {
       newLikes.push(userId);
     }
@@ -68,8 +70,7 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
       <div className="flex gap-2 mr-5">
         <img
           src={
-            '/assets/icons/' +
-            (checkIsLiked() ? 'like.svg' : 'liked.svg')
+            '/assets/icons/' + (checkIsLiked() ? 'like.svg' : 'liked.svg')
           }
           alt="like"
           width={20}
@@ -81,11 +82,10 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
       </div>
 
       <div className="flex gap-2 mr-5">
-      { (isSaved || isDeletingSaved) ? <Loader/> :
+      { (isSaved && isDeletingSaved) ? <Loader/> :
         <img
           src={
-            '/assets/icons/' +
-            (isSaved ? 'saved.svg' : 'save.svg')
+            '/assets/icons/' + (isSaved ? 'saved.svg' : 'save.svg')
           }
           alt="save"
           width={20}

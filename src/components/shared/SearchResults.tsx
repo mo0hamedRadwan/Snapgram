@@ -7,7 +7,7 @@ type SearchResultProps = {
   searchedPosts?: Models.Document[];
 }
 
-const SearchResults = ({ isSearchFetching, searchedPosts }: SearchResultProps) => {
+const SearchResults = ({ isSearchFetching = true, searchedPosts }: SearchResultProps) => {
 
   //console.log(searchedPosts);
   if(isSearchFetching) 

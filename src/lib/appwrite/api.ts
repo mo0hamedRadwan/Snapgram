@@ -366,7 +366,7 @@ export async function deletePost(postId: string, imageId: string){
 
 export async function getInfinitePosts({ pageParam = '' } : { pageParam: string}){
   // limit is 1 to see infinite posts
-  const queries: string[] = [Query.orderDesc('$updatedAt'), Query.limit(1)]
+  const queries: string[] = [Query.orderDesc('$updatedAt'), Query.limit(10)]
   
   // currentPage++;
 

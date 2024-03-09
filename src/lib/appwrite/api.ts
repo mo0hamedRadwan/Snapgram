@@ -2,6 +2,12 @@ import { ID, Query } from 'appwrite';
 import { INewPost, INewUser, IUpdatePost } from '@/types';
 import { account, avatars, databases, appwriteConfig, storage } from './config';
 
+// Manual Pagination Because appwrite doesn't have pagination
+let numOfPosts: number = 2; // have 2 posts
+let currentPage: number = 0;
+const limit: number = 10;
+export let hasNextPage = true;
+
 
 export async function createUserAccount(user: INewUser) {
   try {
@@ -175,6 +181,9 @@ export async function createPost(post: INewPost) {
       throw Error;
     }
 
+    // increment Post count
+    numOfPosts++;
+
     return newPost;
   } catch (error) {
     console.log(error);
@@ -338,6 +347,9 @@ export async function deletePost(postId: string, imageId: string){
       postId,
     )
 
+    // decrement Post count
+    numOfPosts--;
+
     return {status: "ok"}
   } catch (error) {
     console.log(error);
@@ -346,10 +358,19 @@ export async function deletePost(postId: string, imageId: string){
 
 
 export async function getInfinitePosts({ pageParam = 0 } : { pageParam: number}){
-  const queries: string[] = [Query.orderDesc('$updatedAt'), Query.limit(10)]
+  
+  const queries: string[] = [Query.orderDesc('$updatedAt'), Query.limit(limit)]
+  currentPage++;
+
+  const offset = (currentPage - 1) * limit;
+  if(offset > numOfPosts) {
+    hasNextPage = false;
+    throw new Error; 
+  }
 
   if(pageParam){
-    queries.push(Query.cursorAfter(pageParam.toString()));
+    //queries.push(Query.cursorAfter(pageParam.toString()));
+    queries.push(Query.offset(offset));
   }
 
   try {

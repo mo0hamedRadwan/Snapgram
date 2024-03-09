@@ -4,7 +4,7 @@ import {
     useQuery,
     useQueryClient,
 } from '@tanstack/react-query';
-import { createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, likePost, savePost, searchPosts, signInAccount, signOutAccount, updatePost } from '../appwrite/api';
+import { createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, hasNextPage, likePost, savePost, searchPosts, signInAccount, signOutAccount, updatePost } from '../appwrite/api';
 import { INewPost, INewUser, IUpdatePost } from '@/types';
 import { QUERY_KEYS } from './QueryKey';
 
@@ -162,19 +162,15 @@ export const useDeletePost = () => {
     });
 }
 
-
 export const useGetPosts = () => {
     return useInfiniteQuery({
         queryKey: [QUERY_KEYS.GET_INFINITE_POSTS],
-        queryFn: ({ pageParam = 0 }) => getInfinitePosts(pageParam),
-        getNextPageParam: (lastPage) => {
-            if(!lastPage)return null;
-            if(lastPage.length === 0) return null;
-
-            const lastId = lastPage[lastPage.length - 1].$id;
-            console.log(lastId);
-            return lastId;
-        }
+        queryFn: getInfinitePosts,
+        initialPageParam: 0,
+        getNextPageParam: () => {
+            if(hasNextPage)return 1;
+            return null;
+        },
     })
 }
 

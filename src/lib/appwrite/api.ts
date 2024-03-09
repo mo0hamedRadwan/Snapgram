@@ -381,7 +381,7 @@ export async function getInfinitePosts({ pageParam = 0 } : { pageParam: number})
       queries
     )
 
-    console.log(posts);
+    //console.log(posts);
     if (!posts) throw Error;
 
     return posts.documents;
@@ -402,6 +402,22 @@ export async function searchPosts(searchTerm: string){
     if (!posts) throw Error;
     
     return posts.documents;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+export async function getSavedPosts(){
+  try {
+    const savedPosts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.savesCollectionId,
+    )
+    
+    if (!savedPosts) throw Error;
+
+    return savedPosts.documents;
   } catch (error) {
     console.log(error);
   }

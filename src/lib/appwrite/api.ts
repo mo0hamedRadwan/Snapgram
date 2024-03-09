@@ -3,10 +3,10 @@ import { INewPost, INewUser, IUpdatePost } from '@/types';
 import { account, avatars, databases, appwriteConfig, storage } from './config';
 
 // Manual Pagination Because appwrite doesn't have pagination
-let numOfPosts: number = 2; // have 2 posts
-let currentPage: number = 0;
-const limit: number = 10;
-export let hasNextPage = true;
+// let numOfPosts: number = 2; // have 2 posts
+// let currentPage: number = 0;
+// const limit: number = 10;
+// export let hasNextPage = true;
 
 
 export async function createUserAccount(user: INewUser) {
@@ -182,7 +182,7 @@ export async function createPost(post: INewPost) {
     }
 
     // increment Post count
-    numOfPosts++;
+    //numOfPosts++;
 
     return newPost;
   } catch (error) {
@@ -339,18 +339,24 @@ export async function updatePost(post: IUpdatePost) {
 
 
 export async function deletePost(postId: string, imageId: string){
-  if(!postId || !imageId) throw Error;
-
   try {
+    //console.log(postId, imageId)
+    if(!postId || !imageId) throw Error;
+
+    console.log('delete post', postId);
     await databases.deleteDocument(
       appwriteConfig.databaseId,
       appwriteConfig.postsCollectionId,
       postId,
     )
 
-    // decrement Post count
-    numOfPosts--;
+    await deleteFile(imageId)
+    
 
+
+    // decrement Post count
+    //numOfPosts--;
+    
     return {status: "ok"}
   } catch (error) {
     console.log(error);
@@ -358,20 +364,21 @@ export async function deletePost(postId: string, imageId: string){
 }
 
 
-export async function getInfinitePosts({ pageParam = 0 } : { pageParam: number}){
+export async function getInfinitePosts({ pageParam = '' } : { pageParam: string}){
+  // limit is 1 to see infinite posts
+  const queries: string[] = [Query.orderDesc('$updatedAt'), Query.limit(1)]
   
-  const queries: string[] = [Query.orderDesc('$updatedAt'), Query.limit(limit)]
-  currentPage++;
+  // currentPage++;
 
-  const offset = (currentPage - 1) * limit;
-  if(offset > numOfPosts) {
-    hasNextPage = false;
-    throw Error; 
-  }
+  // const offset = (currentPage - 1) * limit;
+  // if(offset > numOfPosts) {
+  //   hasNextPage = false;
+  //   throw Error; 
+  // }
 
-  if(pageParam){
-    //queries.push(Query.cursorAfter(pageParam.toString()));
-    queries.push(Query.offset(offset));
+  if(pageParam !== ''){
+    queries.push(Query.cursorAfter(pageParam));
+    //queries.push(Query.offset(offset));
   }
 
   try {
@@ -408,11 +415,12 @@ export async function searchPosts(searchTerm: string){
 }
 
 
-export async function getSavedPosts(){
+export async function getSavedPosts(userId: string){
   try {
     const savedPosts = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.savesCollectionId,
+      [Query.equal('user', userId)]
     )
     
     if (!savedPosts) throw Error;

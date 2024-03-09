@@ -4,26 +4,28 @@ import { Button } from '@/components/ui/button';
 import { useUserContext } from '@/context/AuthContext';
 import { useDeletePost, useGetPostById } from '@/lib/react-query/queriesAndMutations'
 import { multiFormatDateString } from '@/lib/utils';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const PostDetails = () => {
   const { id } = useParams();
   const { data: post, isPending } = useGetPostById(id || '');
   const { user } = useUserContext();
+  const navigate = useNavigate();
 
-  const { mutateAsync: deletePost } = useDeletePost();
+  const { mutateAsync: deletePost, isPending: isDeletePost } = useDeletePost();
 
   if(!post){
     return <Loader />;
   }
 
   const deletePostHandler = () => {
-    return deletePost({postId: post.$id, imageId: post.imageUrl.$id});
+    deletePost({postId: post.$id, imageId: post.imageId})
+        .then(() => navigate('/'))
   }
 
   return (
     <div className='post_details-container'>
-      {isPending? ( <Loader />
+      {!post || isPending || isDeletePost? ( <Loader />
       ) : (
         <div className='post_details-card'>
           <img 
@@ -75,7 +77,7 @@ const PostDetails = () => {
                 <Button
                   variant='ghost'
                   className={`ghost_details-delete ${user.id !== post?.creator.$id && 'hidden'}`}
-                  onClick={() => deletePostHandler}
+                  onClick={deletePostHandler}
                 >
                   <img 
                     src="/assets/icons/delete.svg" 

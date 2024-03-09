@@ -21,7 +21,7 @@ const GridPostList = ({ posts, showUser= true, showStats= true }: GridPostListPr
           className="relative min-w-80 h-80"
         >
           <Link 
-            to={`/post-details/${post.$id}`}
+            to={`/posts/${post.$id}`}
             className="grid-post_link"
           >
             <img 

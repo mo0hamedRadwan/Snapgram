@@ -1,10 +1,13 @@
 import GridPostList from '@/components/shared/GridPostList';
 import Loader from '@/components/shared/Loader';
+import { useUserContext } from '@/context/AuthContext';
 import { useSavedPosts } from '@/lib/react-query/queriesAndMutations';
 
 const Saved = () => {
-  const { data: savedPosts, isLoading: isPostsLoading } = useSavedPosts();
+  const currentUser = useUserContext();
+  const { data: savedPosts, isLoading: isPostsLoading } = useSavedPosts(currentUser.user.id);
   const posts = savedPosts?.map(post => post.post);
+  //console.log(currentUser)
   //console.log(posts);
 
   return (
